@@ -1,48 +1,40 @@
-var Button = React.createClass({
-    localHandleClick: function() {
-        this.props.localHandleClick(this.props.increment);
-    },
-
-    render: function(){
-        return (
-            <button onClick={this.localHandleClick}>{this.props.increment}</button>
-        )
-    }
-});
-
-var Result = React.createClass({
-    render: function(){
-        return( 
-            <div>{this.props.localCounter}</div>
-        )
-    }
-});
-
-var Main = React.createClass({
+// Card component
+var Card = React.createClass({
+    // Initializing the component with an empty state object
     getInitialState: function() {
-        return {
-            counter: 0,
-        };
+        return {};
     },
-
-    handleClick: function(increment) {
-        this.setState({
-            counter: this.state.counter+increment,
+    //Enough time to make the component fetch the data
+    // Changing data through a lifecycle hook
+    componentDidMount: function() {
+        var component = this;
+        $.get("https://api.github.com/users/" + this.props.login, function(data) {
+            component.setState(data);
         });
-
     },
 
-    render: function(){
+
+    render: function() {
         return(
             <div>
-                <Button localHandleClick={this.handleClick} increment={1} />
-                <Button localHandleClick={this.handleClick} increment={5} />
-                <Button localHandleClick={this.handleClick} increment={10} />
-                <Button localHandleClick={this.handleClick} increment={100} />
-                <Result localCounter={this.state.counter}/>
+                <img src= {this.state.avatar_url} width="120" />
+                <h3>{this.state.name}</h3>
+                <hr/>
+            </div>
+        );
+    }
+});
+
+// Main component
+var Main = React.createClass({
+    render: function() {
+        return (
+            <div>
+                <Card login="cosmas28" />
+                <Card login="chepkoy" />
             </div>
         )
     }
-})
+});
 
 React.render(<Main />, document.getElementById("root"));
